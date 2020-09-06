@@ -1,4 +1,4 @@
-<html>
+ <html>
 <head>
     <title>sample</title>
     <script src="https://unpkg.com/vue"></script>
@@ -6,15 +6,123 @@
 <body>
     <div id="app">
         {{ message }}
+        <div v-bind:style="aaa">{{ message2 }}</div>
+        <template v-if="flag">
+            <p>aaaaaaaaaa</p>
+        </template>
+        <template v-else>
+            <p>bbbbbbbbbb</p>
+        </template>
+        <template v-for="item in items">
+            <div>{{item}}</div>
+        </template>
+        <template v-for="item2 in items2">
+            <div>{{item2.name}}</div>
+        </template>
+        <template v-for="(value, key) in items3">
+            <div>{{key}}</div>
+            <div>{{value.name}}</div>
+        </template>
+    </div>
+    <br>
+    <br>
+
+    <div id="comp">
+        <div><input type="text" v-model="text_ccc"></div>
+    	<hello aaa='aaa_val' bbb='bbb_val' v-bind:ccc="text_ccc" v-for="(value, key) in items" v-bind:item_val="value" />
+    	<comptest aaa='aaa_val' bbb='bbb_val' v-bind:ccc="text_ccc" v-for="(value, key) in items" v-bind:item_val="value" />
+    </div>
+    <br>
+    <br>
+
+    <div id="comp2">
+        <div><input type="text" v-model="text_ccc"></div>
+    	<comptest aaa='aaa_val' bbb='bbb_val' v-bind:ccc="text_ccc" v-for="(value, key) in items" v-bind:item_val="value" />
+    </div>
+    <br>
+    <br>
+
+    <template>
+        <p>template template</p>
+    </template>
+    <div>
+        <div><input type="text" id="a" oninput="test(event);"></div>
+        <div><input type="text" id="b" ></div>
+        <div><input type="button" value="test2" onclick="test2(event);"></div>
+        <div><input type="button" value="test3" onclick="test3(event);"></div>
     </div>
 
     <script>
+
+    	Vue.component('hello', {
+    		props: ['aaa', 'bbb', 'ccc', 'item_val'],
+    		template: '<p v-on:click="doAction();">{{message}}&nbsp;{{aaa}}&nbsp;{{bbb}}&nbsp;{{ccc}}&nbsp;{{item_val}}&nbsp;{{counter}}</p>',
+        	data: function(){
+        		return {
+        			message: 'component hello',
+        			counter: 0
+        		}
+        	},
+        	methods: {
+        		doAction: function (event) {
+					this.counter++;
+        		}
+        	}
+    	});
+
+        var data = {
+        		message: 'Hello World',
+            	message2: '<p style="color:blue;">message2</p>',
+            	aaa: 'color:blue;',
+            	text_ccc: 'no-data',
+            	flag: true,
+            	items: ['aa', 'bb', 'cc', 'dd', 'ee', 'ff'],
+            	items2: [{name: 'name1'}, {name: 'name2'}, {name: 'name3'}],
+            	items3: {key1:{name: 'name1'}, key2:{name: 'name2'}, key3:{name: 'name3'}}
+        };
+
         var app = new Vue({
         	el: '#app',
-        	data: {
-        		message: 'Hello World'
+        	data: data,
+        	//render: (ele) => {return ele('p', {'style': 'color:red;'}, data.message)}
+        });
+
+        var comp = new Vue({
+        	el: '#comp',
+        	data: data,
+        });
+
+        var comp2 = new Vue({
+        	el: '#comp2',
+        	data: data,
+        	components: {
+        		comptest: {
+            		props: ['aaa', 'bbb', 'ccc', 'item_val'],
+            		template: '<p v-on:click="doAction();">{{message}}&nbsp;{{aaa}}&nbsp;{{bbb}}&nbsp;{{ccc}}&nbsp;{{item_val}}&nbsp;{{counter}}</p>',
+                	data: function(){
+                		return {
+                			message: 'component local',
+                			counter: 0
+                		}
+                	},
+                	methods: {
+                		doAction: function (event) {
+        					this.counter++;
+                		}
+                	}
+        		}
         	}
         });
+
+        function test (event) {
+        	data.message = event.target.value;
+        }
+        function test2 (event) {
+        	data.aaa = 'color:' + document.getElementById("a").value;
+        }
+        function test3 (event) {
+        	data.flag = Boolean(document.getElementById("b").value);
+        }
     </script>
 </body>
 </html>
